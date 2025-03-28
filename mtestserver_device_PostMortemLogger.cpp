@@ -4,7 +4,7 @@
 #include "src/PMLDevice.h"
 #include <string>
 
-#define SERVER_DEVICE EtherNetIP::EtherNetIPDevice
+#define SERVER_DEVICE PMLDevice
 #define CAST_DEVICE(x) static_cast<SERVER_DEVICE *>(x)
 
 bool str_copy(const std::string &str, char *desk_str, int32_t max_len) {
@@ -26,19 +26,19 @@ int32_t new_device(const char *name, const char *lic, const char *config, void *
 
 int32_t do_step(void *device) {
     CHECK_HANDLE(device);
-    CAST_DEVICE(device)->DoStep();
+    CAST_DEVICE(device)->do_step();
     return DEVICE_NO_ERROR;
 }
 
 int32_t do_function(void *device, const char *name, const char *data, int32_t timeout, char *result, int32_t *max_len) {
     std::string rt;
-    CAST_DEVICE(device)->DoFunction(name, data, rt);
+    CAST_DEVICE(device)->do_function(name, data, rt);
     return rt.empty() ? DEVICE_NO_ERROR : str_lack_copy(rt, result, max_len);
 }
 
 int32_t get_timing_loop_info(void *device, double *freq, int32_t *processor, int32_t *priority) {
     CHECK_HANDLE(device);
-    CAST_DEVICE(device)->get_timing_info(*freq, *processor, *priority);
+    CAST_DEVICE(device)->get_timing_info(freq, processor, priority);
     return DEVICE_NO_ERROR;
 }
 

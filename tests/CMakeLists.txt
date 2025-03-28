@@ -4,9 +4,9 @@ project(TestProject)
 
 set(VCPKG ON)
 
-if(VCPKG)
+if (VCPKG)
     find_package(GTest CONFIG REQUIRED)
-else()
+else ()
     include(FetchContent)
     FetchContent_Declare(
             googletest
@@ -14,13 +14,14 @@ else()
             GIT_TAG v1.13.0
     )
     FetchContent_MakeAvailable(googletest)
-endif()
+endif ()
 
 include(GoogleTest)
 
 add_executable(PMLTests PMLTests.cpp)
-target_include_directories(PMLTests PRIVATE ../src ../tools gtest)
 
-target_link_libraries(PMLTests PUBLIC GTest::gtest GTest::gtest_main PUBLIC varmanger serverlogger)
+target_include_directories(PMLTests PRIVATE ../src../tools gtest)
+
+target_link_libraries(PMLTests PUBLIC GTest::gtest GTest::gtest_main TDMS_master serverlogger varmanager)
 
 gtest_discover_tests(PMLTests)
