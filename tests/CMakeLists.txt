@@ -20,8 +20,8 @@ include(GoogleTest)
 
 add_executable(PMLTests PMLTests.cpp)
 
-target_include_directories(PMLTests PRIVATE ../src../tools gtest)
+target_include_directories(PMLTests PRIVATE ../src ../tools gtest)
 
-target_link_libraries(PMLTests PUBLIC GTest::gtest GTest::gtest_main TDMS_master serverlogger varmanager)
+target_link_libraries(PMLTests PUBLIC GTest::gtest GTest::gtest_main TDMS_master varmanager serverlogger)
 
 gtest_discover_tests(PMLTests)

@@ -8,8 +8,10 @@
 #include <cstdint>
 #include <string>
 #include <utility>
+#include <future>
+#include <functional>
 
-#include "PMLTypes.h"
+#include "PMLVariable.h"
 #include "PMLTypeSupport.h"
 
 using namespace std;
@@ -17,13 +19,11 @@ using namespace std;
 class PMLDevice {
 public:
     explicit PMLDevice(string name, const shared_ptr<DeviceConfig> &config, void *con) : deviceName(std::move(name)), deviceConfig(config), con(con) {
-
     }
 
     explicit PMLDevice(const string &name, const string &config, void *con) : PMLDevice(name, parseConfig(config, errorcode), con) {}
 
     int32_t do_step() {
-        return 0;
     }
 
     int32_t do_function(const string &name, const string &data, const string &rt) {
@@ -31,12 +31,9 @@ public:
     }
 
     void GetAllVariables(std::string &vars, std::string &des) {
-        int i = 1, j = 1;
-        for (auto &chn: deviceConfig->channels) {
-            if (!chn->varName.empty()) {
+        for (auto &chn: deviceConfig->channels)
+            if (!chn->varName.empty())
                 vars += chn->varName + ",";
-            }
-        }
         if (vars.back() == ',')vars.pop_back();
     }
 
@@ -48,7 +45,7 @@ public:
         return 0;
     }
 
-    int32_t set_name(const string &name) { deviceName = name; }
+    void set_name(const string &name) { deviceName = name; }
 
     string get_name() const { return deviceName; }
 
@@ -58,6 +55,7 @@ private:
     string deviceName;
     shared_ptr<DeviceConfig> deviceConfig;
     void *con;
+    shared_ptr<Variable> vPtr;
     int32_t errorcode;
 };
 
