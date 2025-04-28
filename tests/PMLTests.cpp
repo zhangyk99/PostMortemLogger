@@ -246,3 +246,17 @@ TEST(outputTDMS, test){
     chrono::system_clock::time_point end = chrono::system_clock::now();
     cout << "spent time: " << chrono::duration_cast<chrono::microseconds>(end - begin).count();
 }
+
+TEST(createTimestamp, test){
+    vector<chrono::system_clock::time_point> preTimestamp{};
+    vector<chrono::system_clock::time_point> postTimestamp{};
+    chrono::system_clock::time_point stop = chrono::system_clock::now();
+    for(size_t i = 0; i < 100000; i++)
+        preTimestamp.push_back(stop - chrono::seconds(10) + chrono::milliseconds(i));
+    for(size_t i = 0; i < 100000; i++)
+        postTimestamp.push_back(stop + chrono::milliseconds(i));
+    chrono::system_clock::time_point end = chrono::system_clock::now();
+    cout << chrono::duration_cast<chrono::microseconds>(end - stop).count() << endl;
+    cout << preTimestamp.size() << endl;
+    cout << postTimestamp.size() << endl;
+}

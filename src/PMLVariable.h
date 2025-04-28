@@ -98,12 +98,10 @@ public:
                 lock_guard<mutex> lock(mtx);
                 prePrimaryData.assign(primaryData.begin(), primaryData.end());
             }
-            for (size_t i = 0; i < frequency * postTime; i++) {
+            for (size_t i = 0; i < frequency * postTime; i++)
                 preTimestamp.push_back(stopTime - chrono::seconds(preTime) + chrono::microseconds((1000000 / frequency) * i));
-            }
-            for (size_t i = 0; i < frequency * preTime; i++) {
+            for (size_t i = 0; i < frequency * preTime; i++)
                 postTimestamp.push_back(stopTime + chrono::microseconds((1000000 / frequency) * i));
-            }
             {
                 this_thread::sleep_for(chrono::seconds(postTime));
                 lock_guard<mutex> lock(mtx);
