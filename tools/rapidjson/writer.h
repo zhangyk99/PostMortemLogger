@@ -70,7 +70,7 @@ enum WriteFlag {
 };
 
 //! JSON writer
-/*! Writer implements the concept Handler.
+/*! writer implements the concept Handler.
     It generates JSON text by events to an output os.
 
     User may programmatically calls the functions of a writer to generate JSON text.
@@ -115,11 +115,11 @@ public:
     //! reset the writer with a new stream.
     /*!
         This function reset the writer with a new stream and default settings,
-        in order to make a Writer object reusable for output multiple JSONs.
+        in order to make a writer object reusable for output multiple JSONs.
 
         \param os New output stream.
         \code
-        Writer<OutputStream> writer(os1);
+        writer<OutputStream> writer(os1);
         writer.StartObject();
         // ...
         writer.EndObject();
@@ -166,7 +166,7 @@ public:
 
         The default setting does not truncate any decimal places. You can restore to this setting by calling
         \code
-        writer.SetMaxDecimalPlaces(Writer::kDefaultMaxDecimalPlaces);
+        writer.SetMaxDecimalPlaces(writer::kDefaultMaxDecimalPlaces);
         \endcode
     */
     void SetMaxDecimalPlaces(int maxDecimalPlaces) {
@@ -571,7 +571,7 @@ inline bool Writer<StringBuffer>::WriteDouble(double d) {
 
 #if defined(CEREAL_RAPIDJSON_SSE2) || defined(CEREAL_RAPIDJSON_SSE42)
 template<>
-inline bool Writer<StringBuffer>::ScanWriteUnescapedString(StringStream& is, size_t length) {
+inline bool writer<StringBuffer>::ScanWriteUnescapedString(StringStream& is, size_t length) {
     if (length < 16)
         return CEREAL_RAPIDJSON_LIKELY(is.Tell() < length);
 
@@ -632,7 +632,7 @@ inline bool Writer<StringBuffer>::ScanWriteUnescapedString(StringStream& is, siz
 }
 #elif defined(CEREAL_RAPIDJSON_NEON)
 template<>
-inline bool Writer<StringBuffer>::ScanWriteUnescapedString(StringStream& is, size_t length) {
+inline bool writer<StringBuffer>::ScanWriteUnescapedString(StringStream& is, size_t length) {
     if (length < 16)
         return CEREAL_RAPIDJSON_LIKELY(is.Tell() < length);
 

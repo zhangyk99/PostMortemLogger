@@ -525,7 +525,7 @@ template<> inline void SkipWhitespace(EncodedInputStream<UTF8<>, MemoryStream>& 
     non-destructive parsing.
 
     For in-situ parsing, the decoded string is directly written to the source
-    text string, no temporary buffer is required.
+    text string, no temporary bufferPtr is required.
 
     A GenericReader object can be reused for parsing multiple JSON text.
 

@@ -5,9 +5,8 @@
 #ifndef POSTMORTEMLOGGER_PMLTYPESUPPORT_H
 #define POSTMORTEMLOGGER_PMLTYPESUPPORT_H
 
-#include <memory>
-#include <vector>
-#include "PMLTypeSupport.h"
+//#include <memory>
+//#include <vector>
 #include "rapidjson/document.h"
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/writer.h"
@@ -15,7 +14,7 @@
 
 #define get_json_string(x) x.IsNull() ? "" : x.GetString()
 
-shared_ptr<DeviceConfig> parseConfig(const std::string &config) {
+std::shared_ptr<DeviceConfig> parseConfig(const std::string &config) {
     rapidjson::Document doc1;
     doc1.Parse<rapidjson::kParseNanAndInfFlag>(config.c_str());
     if (doc1.HasParseError())
@@ -27,21 +26,21 @@ shared_ptr<DeviceConfig> parseConfig(const std::string &config) {
     cfg->frequency = doc["Frequence"].GetDouble();
     cfg->fileType = doc["FileType"].GetInt();
     const rapidjson::Value &Channels = doc["Channels"];
-    for(rapidjson::SizeType i = 0; i < Channels.Size(); i++) {
-        shared_ptr<Channel> chn;
-        chn->statisticsType = get_json_string(doc["StatisticsType"]);
-        chn->channelName = get_json_string(doc["ChannelName"]);
-        chn->varName = get_json_string(doc["VarName"]);
-        chn->varType = get_json_string(doc["VarType"]);
-        chn->varUnit = get_json_string(doc["VarUnit"]);
-        chn->channelType = get_json_string(doc["ChannelType"]);
-        chn->channelDes = get_json_string(doc["ChannelDes"]);
+    for (rapidjson::SizeType i = 0; i < Channels.Size(); i++) {
+        auto chn = std::make_shared<Channel>();
+        chn->statisticsType = get_json_string(Channels[i]["StatisticsType"]);
+        chn->channelName = get_json_string(Channels[i]["ChannelName"]);
+        chn->varName = get_json_string(Channels[i]["VarName"]);
+        chn->varType = get_json_string(Channels[i]["VarType"]);
+        chn->varUnit = get_json_string(Channels[i]["VarUnit"]);
+        chn->channelType = get_json_string(Channels[i]["ChannelType"]);
+        chn->channelDes = get_json_string(Channels[i]["ChannelDes"]);
         cfg->channels.push_back(chn);
     }
     return cfg;
 }
 
-shared_ptr<DeviceConfig> parseConfig(const std::string &config, int &errorCode) {
+std::shared_ptr<DeviceConfig> parseConfig(const std::string &config, int &errorCode) {
     try {
         auto cfg = parseConfig(config);
         if (cfg) return cfg;
@@ -53,105 +52,132 @@ shared_ptr<DeviceConfig> parseConfig(const std::string &config, int &errorCode) 
     }
 }
 
-////        for(auto &str : varNameList)
-////            cout << str << " ";
-////        cout << endl;
-////        cout << "preData size: ";
-////        for(auto &chn : preData) {
-////            if(chn.vct_dbl.empty())
-////                cout << chn.vct_str.size() << ' ';
-////            else
-////                cout << chn.vct_dbl.size() << ' ';
-////        }
-////        cout << "postData size: ";
-////        for(auto &chn : postData) {
-////            if(chn.vct_dbl.empty())
-////                cout << chn.vct_str.size() << ' ';
-////            else
-////                cout << chn.vct_dbl.size() << ' ';
-////        }
-//chrono::system_clock::time_point now = postTimestamp.front();
-//time_t tp = chrono::system_clock::to_time_t(now);
-//tm nowPoint;
-//localtime_s(&nowPoint, &tp);
-//void *fileHandle = nullptr;
-//string name = "PML_" + to_string(nowPoint.tm_year + 1900) + two_digit(nowPoint.tm_mon + 1) + two_digit(nowPoint.tm_mday) + '_' +
-//              two_digit(nowPoint.tm_hour) + two_digit(nowPoint.tm_min) + two_digit(nowPoint.tm_sec);
-//cout << name << endl;
-//string filePath = "D:/test/" + name + ".tdms";
-//open_file(filePath.c_str(), "w", fileHandle);
-//create_file_property_string(fileHandle, "name", name.c_str());
-//create_file_property_string(fileHandle, "Description", warningDes.c_str());
-//void *groupPreHandle = nullptr;
-//void *groupPostHandle = nullptr;
-//void *channelPreTimeHandle = nullptr;
-//void *channelPostTimeHandle = nullptr;
-//vector<void*> channelPreHandle(preData.size(), nullptr);
-//vector<void*> channelPostHandle(postData.size(), nullptr);
-//
-//create_group(fileHandle, "Pre-shutdown", groupPreHandle);
-//
-//vector<const char *> cstrs;
-//create_channel(groupPreHandle, "Time", channelPreTimeHandle);
-//
-//vector<timestamp> timestampList{};
-//for (auto &ts: preTimestamp) {
-//time_t time = chrono::system_clock::to_time_t(ts);
-//tm timePoint = *localtime(&time);
-//auto sinceEpoch = ts.time_since_epoch();
-//auto micro = chrono::duration_cast<chrono::microseconds>(sinceEpoch) % chrono::seconds(1);
-//timestamp t{timePoint.tm_year + 1900, timePoint.tm_mon + 1, timePoint.tm_mday, timePoint.tm_hour, timePoint.tm_min, timePoint.tm_sec, static_cast<int32_t>(micro.count())};
-//timestampList.push_back(t);
+//std::vector<Channel> parseChannelList(const std::string &channelListName) {
+//    int32_t size = 0;
+//    if (channel_list_get(channelListName.c_str(), nullptr, &size) != -1)
+//        return {};
+//    std::string chn_str{};
+//    chn_str.resize(size);
+//    if (channel_list_get(channelListName.c_str(), chn_str.data(), &size) != 0)
+//        return {};
+//    std::vector<Channel> vec_chn{};
+//    std::stringstream ss(chn_str);
+//    std::string item;
+//    std::vector<std::string> result;
+//    while (std::getline(ss, item, ',')) {
+//        result.push_back(item);
+//    }
+//    if (result.size() % 7 != 0)
+//        return {};
+//    Channel chn;
+//    for (size_t i = 0; i < result.size() / 7; i++) {
+//        chn.statisticsType = result[i];
+//        chn.channelName =    result[i + 1];
+//        chn.varName =        result[i + 2];
+//        chn.varType =        result[i + 3];
+//        chn.varUnit =        result[i + 4];
+//        chn.channelType =    result[i + 5];
+//        chn.channelDes =     result[i + 6];
+//        vec_chn.push_back(chn);
+//    }
+//    return vec_chn;
 //}
-//set_channel_data_timestamp(channelPreTimeHandle, timestampList.size(), timestampList.data());
-//
-//for (size_t i = 0; i < varNameList.size(); i++) {
-//create_channel(groupPreHandle, varNameList[i].c_str(), channelPreHandle[i]);
-//
-//create_channel_property_string(channelPreHandle[i], "Description", "");
-//create_channel_property_string(channelPreHandle[i], "unit_string", "");
-////            create_channel_property_int32(channelPreHandle[i], "NI_ArrayColumn", static_cast<int32_t>(i));
-//
-//if (preData[i].vec_dbl.empty()) {
-//cstrs.clear();
-//for (const auto &str: preData[i].vec_str)
-//cstrs.push_back(str.c_str());
-//set_channel_data_string(channelPreHandle[i], cstrs.size(), cstrs.data());
-//} else {
-//set_channel_data_double(channelPreHandle[i], preData[i].vec_dbl.size(), preData[i].vec_dbl.data());
+
+//void VarRecord() {
+//    chrono::system_clock::time_point begin = chrono::system_clock::now();
+//    queue<event_data_t> que{};
+//    this_thread::sleep_for(chrono::microseconds(1000000));
+//    {
+//        lock_guard<mutex> lock(mtx_data);
+//        primaryData.swap(que);
+//    }
+//    auto begin_time = TransformTime(&que.front().time);
+//    auto end_time = TransformTime(&que.back().time);
+//    auto time_pos = begin_time + chrono::microseconds(1000);
+//    size_t index = 1;
+//    vector<timestamp> ts;
+//    auto ts_size = chrono::duration_cast<chrono::milliseconds>(end_time - begin_time).count();
+//    ts.reserve(ts_size);
+//    for(size_t i = 0; i < ts_size; i++){
+//        time_t tp = std::chrono::system_clock::to_time_t(begin_time + chrono::microseconds(1000*i));
+//        tm t;
+//        localtime_s(&t, &tp);
+//        ts.push_back({t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec, static_cast<int32_t>((chrono::duration_cast<chrono::microseconds>((begin_time + chrono::microseconds(1000*i)).time_since_epoch()) % chrono::seconds(1)).count())});
+//    }
+//    for (auto &chn: table) {
+//        if (chn.type) {
+//            chn.dbl.clear();
+//            chn.dbl.resize(ts_size);
+//        }
+//        else {
+//            chn.str.clear();
+//            chn.str.resize(ts_size);
+//        }
+//    }
+//    vector<uint32_t> chnNum(ts_size, 1);
+//    uint32_t count = 1;
+//    for(size_t i = 0; i < table.size(); i++){
+//        table[i].dbl[0] = beginData[i];
+//    }
+//    while (!que.empty()) {
+//        if (TransformTime(&que.front().time) > time_pos) {
+////                for (size_t i = 0; i < table.size(); i++) {
+////                    if (table[i].type) {
+////                        if (chnNum[i] == index) {
+////                            table[i].dbl[index] = table[i].dbl[index - 1];
+////                            chnNum[i]++;
+////                        }
+////                    } else {
+////                        if (chnNum[i] == index) {
+////                            table[i].str[index] = table[i].str[index - 1];
+////                            chnNum[i]++;
+////                        }
+////                    }
+////                }
+//            index++;
+//            if(index == ts_size)
+//                index--;
+//            time_pos = time_pos + chrono::microseconds(1000);
+//        } else {
+//            if (table[var_index[que.front().name]].type) {
+//                chnNum[var_index[que.front().name]]++;
+//                table[var_index[que.front().name]].dbl[index] = que.front().value_dbl;
+//            } else {
+//                chnNum[var_index[que.front().name]]++;
+//                table[var_index[que.front().name]].str[index] = que.front().value_str;
+//            }
+//            que.pop();
+//        }
+////            cout << index << " " << count << endl;
+//        count++;
+//    }
+//    string filePath = "D:/test/" + TransformStrTimeS(begin_time) + ".tdms";
+//    void *fileHandle = nullptr;
+//    open_file(filePath.c_str(), "w", fileHandle);
+//    void *groupHandle = nullptr;
+//    create_group(fileHandle, "data", groupHandle);
+//    void *channelHandle = nullptr;
+//    create_channel(groupHandle, "Time", channelHandle);
+//    set_channel_data_timestamp(channelHandle, index, ts.data());
+//    vector<const char *> cstrs;
+//    for (size_t i = 0; i < table.size(); i++) {
+////                if(chnList[i].empty()){
+////                    create_channel(groupHandle, chnList[i].c_str(), channelHandle);
+////                } else{
+//        create_channel(groupHandle, varList[i].c_str(), channelHandle);
+////                }
+//        if (table[i].type) {
+//            set_channel_data_double(channelHandle, index, table[i].dbl.data());
+//        } else {
+//            for (size_t j = 0; j < table[i].str.size(); j++)
+//                cstrs[j] = table[i].str[j].c_str();
+//            set_channel_data_string(channelHandle, cstrs.size(), cstrs.data());
+//        }
+//    }
+//    save_file(fileHandle);
+//    close_file(fileHandle);
+//    chrono::system_clock::time_point end = chrono::system_clock::now();
+//    cout << "time spend:" << chrono::duration_cast<chrono::microseconds>(end - begin).count() << endl;
 //}
-//}
-//save_file(fileHandle);
-//
-//create_group(fileHandle, "Post-shutdown", groupPostHandle);
-//
-//create_channel(groupPostHandle, "Time", channelPostTimeHandle);
-//timestampList.clear();
-//for (auto &ts: postTimestamp) {
-//time_t time = chrono::system_clock::to_time_t(ts);
-//tm timePoint = *localtime(&time);
-//auto sinceEpoch = ts.time_since_epoch();
-//auto mirco = chrono::duration_cast<chrono::microseconds>(sinceEpoch) % chrono::seconds(1);
-//timestamp t{timePoint.tm_year + 1900, timePoint.tm_mon + 1, timePoint.tm_mday, timePoint.tm_hour, timePoint.tm_min, timePoint.tm_sec, static_cast<int32_t>(mirco.count())};
-//timestampList.push_back(t);
-//}
-//set_channel_data_timestamp(channelPostTimeHandle, timestampList.size(), timestampList.data());
-//for (size_t i = 0; i < varNameList.size(); i++) {
-//create_channel(groupPostHandle, varNameList[i].c_str(), channelPostHandle[i]);
-//create_channel_property_string(channelPostHandle[i], "Description", "");
-//create_channel_property_string(channelPostHandle[i], "unit_string", "");
-////            create_channel_property_int32(channelPostHandle[i], "NI_ArrayColumn", static_cast<int32_t>(i));
-//if (postData[i].vec_dbl.empty()) {
-//cstrs.clear();
-//for (const auto &str: postData[i].vec_str)
-//cstrs.push_back(str.c_str());
-//set_channel_data_string(channelPostHandle[i], cstrs.size(), cstrs.data());
-//} else {
-//set_channel_data_double(channelPostHandle[i], postData[i].vec_dbl.size(), postData[i].vec_dbl.data());
-//}
-//}
-//save_file(fileHandle);
-//close_file(fileHandle);
-//cout << "finish write" << endl;
 
 #endif //POSTMORTEMLOGGER_PMLTYPESUPPORT_H

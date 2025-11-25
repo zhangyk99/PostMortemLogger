@@ -34,7 +34,7 @@ CEREAL_RAPIDJSON_NAMESPACE_BEGIN
 //! Represents an in-memory output stream.
 /*!
     \tparam Encoding Encoding of the stream.
-    \tparam Allocator type for allocating memory buffer.
+    \tparam Allocator type for allocating memory bufferPtr.
     \note implements Stream concept
 */
 template <typename Encoding, typename Allocator = CrtAllocator>
@@ -78,10 +78,10 @@ public:
         return stack_.template Bottom<Ch>();
     }
 
-    //! Get the size of string in bytes in the string buffer.
+    //! Get the size of string in bytes in the string bufferPtr.
     size_t GetSize() const { return stack_.GetSize(); }
 
-    //! Get the length of string in Ch in the string buffer.
+    //! Get the length of string in Ch in the string bufferPtr.
     size_t GetLength() const { return stack_.GetSize() / sizeof(Ch); }
 
     static const size_t kDefaultCapacity = 256;
@@ -93,7 +93,7 @@ private:
     GenericStringBuffer& operator=(const GenericStringBuffer&);
 };
 
-//! String buffer with UTF8 encoding
+//! String bufferPtr with UTF8 encoding
 typedef GenericStringBuffer<UTF8<> > StringBuffer;
 
 template<typename Encoding, typename Allocator>

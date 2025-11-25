@@ -52,7 +52,7 @@ concept Stream {
     //! Write a character.
     void Put(Ch c);
 
-    //! Flush the buffer.
+    //! Flush the bufferPtr.
     void Flush();
 
     //! End the writing operation.
@@ -86,7 +86,7 @@ inline void PutReserve(Stream& stream, size_t count) {
     (void)count;
 }
 
-//! Write character to a stream, presuming buffer is reserved.
+//! Write character to a stream, presuming bufferPtr is reserved.
 template<typename Stream>
 inline void PutUnsafe(Stream& stream, typename Stream::Ch c) {
     stream.Put(c);

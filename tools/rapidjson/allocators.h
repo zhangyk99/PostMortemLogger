@@ -102,11 +102,11 @@ public:
 
     The memory chunks are allocated by BaseAllocator, which is CrtAllocator by default.
 
-    User may also supply a buffer as the first chunk.
+    User may also supply a bufferPtr as the first chunk.
 
-    If the user-buffer is full then additional chunks are allocated by BaseAllocator.
+    If the user-bufferPtr is full then additional chunks are allocated by BaseAllocator.
 
-    The user-buffer is not deallocated by this allocator.
+    The user-bufferPtr is not deallocated by this allocator.
 
     \tparam BaseAllocator the allocator type for allocating memory chunks. Default is CrtAllocator.
     \note implements Allocator concept
@@ -125,13 +125,13 @@ public:
     {
     }
 
-    //! Constructor with user-supplied buffer.
-    /*! The user buffer will be used firstly. When it is full, memory pool allocates new chunk with chunk size.
+    //! Constructor with user-supplied bufferPtr.
+    /*! The user bufferPtr will be used firstly. When it is full, memory pool allocates new chunk with chunk size.
 
-        The user buffer will not be deallocated when this allocator is destructed.
+        The user bufferPtr will not be deallocated when this allocator is destructed.
 
-        \param buffer User supplied buffer.
-        \param size Size of the buffer in bytes. It must at least larger than sizeof(ChunkHeader).
+        \param buffer User supplied bufferPtr.
+        \param size Size of the bufferPtr in bytes. It must at least larger than sizeof(ChunkHeader).
         \param chunkSize The size of memory chunk. The default is kDefaultChunkSize.
         \param baseAllocator The allocator for allocating memory chunks.
     */
@@ -147,14 +147,14 @@ public:
     }
 
     //! Destructor.
-    /*! This deallocates all memory chunks, excluding the user-supplied buffer.
+    /*! This deallocates all memory chunks, excluding the user-supplied bufferPtr.
     */
     ~MemoryPoolAllocator() {
         Clear();
         CEREAL_RAPIDJSON_DELETE(ownBaseAllocator_);
     }
 
-    //! Deallocates all memory chunks, excluding the user-supplied buffer.
+    //! Deallocates all memory chunks, excluding the user-supplied bufferPtr.
     void Clear() {
         while (chunkHead_ && chunkHead_ != userBuffer_) {
             ChunkHeader* next = chunkHead_->next;
@@ -162,7 +162,7 @@ public:
             chunkHead_ = next;
         }
         if (chunkHead_ && chunkHead_ == userBuffer_)
-            chunkHead_->size = 0; // Clear user buffer
+            chunkHead_->size = 0; // Clear user bufferPtr
     }
 
     //! Computes the total capacity of allocated memory chunks.
@@ -224,7 +224,7 @@ public:
             }
         }
 
-        // Realloc process: allocate and copy memory, do not free original buffer.
+        // Realloc process: allocate and copy memory, do not free original bufferPtr.
         if (void* newBuffer = Malloc(newSize)) {
             if (originalSize)
                 std::memcpy(newBuffer, originalPtr, originalSize);
@@ -274,7 +274,7 @@ private:
 
     ChunkHeader *chunkHead_;    //!< Head of the chunk linked-list. Only the head chunk serves allocation.
     size_t chunk_capacity_;     //!< The minimum capacity of chunk when they are allocated.
-    void *userBuffer_;          //!< User supplied buffer.
+    void *userBuffer_;          //!< User supplied bufferPtr.
     BaseAllocator* baseAllocator_;  //!< base allocator for allocating memory chunks.
     BaseAllocator* ownBaseAllocator_;   //!< base allocator created by this object.
 };

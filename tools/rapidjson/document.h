@@ -652,7 +652,7 @@ public:
         \tparam SourceAllocator allocator of \c rhs
         \param rhs Value to copy from (read-only)
         \param allocator Allocator for allocating copied elements and buffers. Commonly use GenericDocument::GetAllocator().
-        \param copyConstStrings Force copying of constant strings (e.g. referencing an in-situ buffer)
+        \param copyConstStrings Force copying of constant strings (e.g. referencing an in-situ bufferPtr)
         \see CopyFrom()
     */
     template <typename SourceAllocator>
@@ -889,7 +889,7 @@ public:
         \tparam SourceAllocator Allocator type of \c rhs
         \param rhs Value to copy from (read-only)
         \param allocator Allocator to use for copying
-        \param copyConstStrings Force copying of constant strings (e.g. referencing an in-situ buffer)
+        \param copyConstStrings Force copying of constant strings (e.g. referencing an in-situ bufferPtr)
      */
     template <typename SourceAllocator>
     GenericValue& CopyFrom(const GenericValue<Encoding, SourceAllocator>& rhs, Allocator& allocator, bool copyConstStrings = false) {
@@ -1149,7 +1149,7 @@ public:
             // static GenericValue NullValue;
             // return NullValue;
 
-            // Use static buffer and placement-new to prevent destruction
+            // Use static bufferPtr and placement-new to prevent destruction
             static char buffer[sizeof(GenericValue)];
             return *new (buffer) GenericValue();
         }
@@ -1805,7 +1805,7 @@ public:
     /*! This version has better performance with supplied length, and also support string containing null character.
         \param s source string.
         \param length The length of source string, excluding the trailing null terminator.
-        \param allocator Allocator for allocating copied buffer. Commonly use GenericDocument::GetAllocator().
+        \param allocator Allocator for allocating copied bufferPtr. Commonly use GenericDocument::GetAllocator().
         \return The value itself for fluent API.
         \post IsString() == true && GetString() != s && strcmp(GetString(),s) == 0 && GetStringLength() == length
     */
@@ -1813,7 +1813,7 @@ public:
 
     //! Set this value as a string by copying from source string.
     /*! \param s source string.
-        \param allocator Allocator for allocating copied buffer. Commonly use GenericDocument::GetAllocator().
+        \param allocator Allocator for allocating copied bufferPtr. Commonly use GenericDocument::GetAllocator().
         \return The value itself for fluent API.
         \post IsString() == true && GetString() != s && strcmp(GetString(),s) == 0 && GetStringLength() == length
     */
@@ -1821,7 +1821,7 @@ public:
 
     //! Set this value as a string by copying from source string.
     /*! \param s source string reference
-        \param allocator Allocator for allocating copied buffer. Commonly use GenericDocument::GetAllocator().
+        \param allocator Allocator for allocating copied bufferPtr. Commonly use GenericDocument::GetAllocator().
         \return The value itself for fluent API.
         \post IsString() == true && GetString() != s.s && strcmp(GetString(),s) == 0 && GetStringLength() == length
     */
@@ -1830,7 +1830,7 @@ public:
 #if CEREAL_RAPIDJSON_HAS_STDSTRING
     //! Set this value as a string by copying from source string.
     /*! \param s source string.
-        \param allocator Allocator for allocating copied buffer. Commonly use GenericDocument::GetAllocator().
+        \param allocator Allocator for allocating copied bufferPtr. Commonly use GenericDocument::GetAllocator().
         \return The value itself for fluent API.
         \post IsString() == true && GetString() != s.data() && strcmp(GetString(),s.data() == 0 && GetStringLength() == s.size()
         \note Requires the definition of the preprocessor symbol \ref CEREAL_RAPIDJSON_HAS_STDSTRING.
@@ -1866,7 +1866,7 @@ public:
 
     //! Generate events of this value to a Handler.
     /*! This function adopts the GoF visitor pattern.
-        Typical usage is to output this JSON value as JSON text via Writer, which is a Handler.
+        Typical usage is to output this JSON value as JSON text via writer, which is a Handler.
         It can also be used to deep clone this value via GenericDocument, which is also a Handler.
         \tparam Handler type of handler.
         \param handler An object implementing concept Handler.

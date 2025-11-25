@@ -12,7 +12,6 @@ extern "C" {
 #endif
 
 #include "TDMS_errorcode.h"
-
 #include "cstdint"
 
 #ifdef _WIN32
@@ -81,6 +80,8 @@ TDMS_API int32_t get_file_property_bool(void *fileHandle, const char *name, bool
 
 TDMS_API int32_t get_file_property_timestamp(void *fileHandle, const char *name, timestamp &data);
 
+TDMS_API int32_t get_file_property_time(void *fileHandle, const char *name, int64_t &data);
+
 TDMS_API int32_t create_file_property_int8(void *fileHandle, const char *name, int8_t data);
 
 TDMS_API int32_t create_file_property_int16(void *fileHandle, const char *name, int16_t data);
@@ -106,6 +107,8 @@ TDMS_API int32_t create_file_property_string(void *fileHandle, const char *name,
 TDMS_API int32_t create_file_property_bool(void *fileHandle, const char *name, bool data);
 
 TDMS_API int32_t create_file_property_timestamp(void *fileHandle, const char *name, timestamp data);
+
+TDMS_API int32_t create_file_property_time(void *fileHandle, const char *name, int64_t data);
 
 TDMS_API int32_t delete_file_property(void *fileHandle, const char* name);
 
@@ -153,6 +156,8 @@ TDMS_API int32_t get_group_property_bool(void *groupHandle, const char *name, bo
 
 TDMS_API int32_t get_group_property_timestamp(void *groupHandle, const char *name, timestamp &data);
 
+TDMS_API int32_t get_group_property_time(void *groupHandle, const char *name, int64_t &data);
+
 TDMS_API int32_t create_group_property_int8(void *groupHandle, const char *name, int8_t data);
 
 TDMS_API int32_t create_group_property_int16(void *groupHandle, const char *name, int16_t data);
@@ -178,6 +183,8 @@ TDMS_API int32_t create_group_property_string(void *groupHandle, const char *nam
 TDMS_API int32_t create_group_property_bool(void *groupHandle, const char *name, bool data);
 
 TDMS_API int32_t create_group_property_timestamp(void *groupHandle, const char *name, timestamp data);
+
+TDMS_API int32_t create_group_property_time(void *groupHandle, const char *name, int64_t data);
 
 TDMS_API int32_t delete_group_property(void *groupHandle, const char *name);
 
@@ -225,6 +232,8 @@ TDMS_API int32_t get_channel_property_bool(void *channelHandle, const char *name
 
 TDMS_API int32_t get_channel_property_timestamp(void *channelHandle, const char *name, timestamp &data);
 
+TDMS_API int32_t get_channel_property_time(void *channelHandle, const char *name, int64_t &data);
+
 TDMS_API int32_t create_channel_property_int8(void *channelHandle, const char *name, int8_t data);
 
 TDMS_API int32_t create_channel_property_int16(void *channelHandle, const char *name, int16_t data);
@@ -250,6 +259,8 @@ TDMS_API int32_t create_channel_property_string(void *channelHandle, const char 
 TDMS_API int32_t create_channel_property_bool(void *channelHandle, const char *name, bool data);
 
 TDMS_API int32_t create_channel_property_timestamp(void *channelHandle, const char *name, timestamp data);
+
+TDMS_API int32_t create_channel_property_time(void *channelHandle, const char *name, int64_t data);
 
 TDMS_API int32_t delete_channel_property(void *channelHandle, const char *name);
 
@@ -309,6 +320,8 @@ TDMS_API int32_t set_channel_data_string(void *channelHandle, uint64_t dataNum, 
 TDMS_API int32_t set_channel_data_bool(void *channelHandle, uint64_t dataNum, bool data[]);
 
 TDMS_API int32_t set_channel_data_timestamp(void *channelHandle, uint64_t dataNum, timestamp data[]);
+
+TDMS_API int32_t set_channel_data_time(void *channelHandle, uint64_t dataNum, int64_t data[]);
 
 TDMS_API const char *get_error_description(int32_t errorCode);
 
